@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/cinema/Navbar";
 import { Footer } from "@/components/cinema/Footer";
@@ -20,6 +20,7 @@ const Account = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const hasRedirected = useRef(false);
   
   // Login state
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -50,15 +51,17 @@ const Account = () => {
       });
       
       // Redirect admin users to admin dashboard after login/register
-      // Only redirect if we're on the account page (not already on admin page)
-      if (user.role === "admin" && isAuthenticated && location.pathname === "/account") {
+      // Only redirect once and only if coming from authentication (not direct navigation)
+      const fromAuth = location.state?.fromAuth;
+      if (user.role === "admin" && isAuthenticated && fromAuth && !hasRedirected.current) {
+        hasRedirected.current = true;
         // Small delay to allow toast to show
         setTimeout(() => {
-          navigate("/admin");
+          navigate("/admin", { replace: true });
         }, 500);
       }
     }
-  }, [user, isAuthenticated, navigate, location.pathname]);
+  }, [user, isAuthenticated, navigate, location.state]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,12 +74,16 @@ const Account = () => {
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
+        // Set fromAuth flag for redirect logic
+        navigate('/account', { state: { fromAuth: true }, replace: true });
       } else {
         await register({ email, password, firstName, lastName, phone });
         toast({
           title: "Account created!",
           description: "Your account has been created successfully.",
         });
+        // Set fromAuth flag for redirect logic
+        navigate('/account', { state: { fromAuth: true }, replace: true });
       }
     } catch (error: any) {
       toast({

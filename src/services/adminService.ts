@@ -224,6 +224,50 @@ class AdminService {
 
     return response.json();
   }
+
+  // Pricing Management
+  async getPricing(): Promise<{ success: boolean; pricing?: any; message?: string }> {
+    const response = await fetch(`${API_BASE_URL}/admin/pricing`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch pricing');
+    }
+
+    return response.json();
+  }
+
+  async updatePricing(pricingData: Record<string, number>): Promise<{ success: boolean; results?: any; errors?: string[]; message?: string }> {
+    const response = await fetch(`${API_BASE_URL}/admin/pricing`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ pricing: pricingData }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update pricing');
+    }
+
+    return response.json();
+  }
+
+  async updateSinglePricing(key: string, value: number): Promise<{ success: boolean; key?: string; value?: number; message?: string }> {
+    const response = await fetch(`${API_BASE_URL}/admin/pricing/${key}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ value }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update pricing');
+    }
+
+    return response.json();
+  }
 }
 
 export const adminService = new AdminService();

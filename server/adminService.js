@@ -1,5 +1,6 @@
 import db from './db.js';
 import { getAllMovies, getMovieById } from './movieService.js';
+import * as pricingService from './pricingService.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -204,6 +205,19 @@ function saveMoviesToJSON(movies) {
     console.error('Error saving movies to JSON:', error);
     throw new Error('Failed to save movies');
   }
+}
+
+// Pricing management
+export function getPricingConfig() {
+  return pricingService.getAllPricing();
+}
+
+export function updatePricingConfig(key, value) {
+  return pricingService.updatePricing(key, value);
+}
+
+export function updateMultiplePricingConfig(pricingData) {
+  return pricingService.updateMultiplePricing(pricingData);
 }
 
 // Get dashboard statistics

@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import AdminMovies from "@/components/admin/AdminMovies";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminBookings from "@/components/admin/AdminBookings";
+import AdminPricing from "@/components/admin/AdminPricing";
 
 const AdminDashboard = () => {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -152,10 +153,11 @@ const AdminDashboard = () => {
 
         {/* Management Tabs */}
         <Tabs defaultValue="movies" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-3 mb-6">
+          <TabsList className="grid w-full max-w-3xl grid-cols-4 mb-6">
             <TabsTrigger value="movies">Movies</TabsTrigger>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing</TabsTrigger>
           </TabsList>
 
           <TabsContent value="movies">
@@ -168,6 +170,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="users">
             <AdminUsers onRefresh={loadStats} />
+          </TabsContent>
+
+          <TabsContent value="pricing">
+            <AdminPricing onRefresh={loadStats} />
           </TabsContent>
         </Tabs>
       </div>

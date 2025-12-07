@@ -36,8 +36,12 @@ import {
   getAllBookings,
   updateBookingStatusAdmin,
   deleteBooking,
-  getDashboardStats
+  getDashboardStats,
+  getPricingConfig,
+  updatePricingConfig,
+  updateMultiplePricingConfig
 } from './adminService.js';
+import * as pricingService from './pricingService.js';
 
 dotenv.config();
 
@@ -517,6 +521,37 @@ app.get('/api/movies/:id', (req, res) => {
   }
 });
 
+// Public pricing endpoint (for frontend to get current pricing)
+app.get('/api/pricing', (req, res) => {
+  try {
+    const basePrice = pricingService.getBasePrice();
+    const multipliers = pricingService.getRoomMultipliers();
+    
+    res.json({
+      success: true,
+      pricing: {
+        basePrice,
+        multipliers
+      }
+    });
+  } catch (error) {
+    console.error('Error getting pricing:', error);
+    // Fallback to default pricing
+    res.json({
+      success: true,
+      pricing: {
+        basePrice: 250,
+        multipliers: {
+          basic: 1.0,
+          '3d': 1.3,
+          premium: 1.8,
+          vip: 2.5
+        }
+      }
+    });
+  }
+});
+
 // Admin endpoints
 // Dashboard stats
 app.get('/api/admin/stats', authenticateToken, requireAdmin, (req, res) => {
@@ -710,6 +745,78 @@ app.delete('/api/admin/bookings/:id', authenticateToken, requireAdmin, (req, res
     res.status(400).json({
       success: false,
       message: error.message || 'Error deleting booking'
+    });
+  }
+});
+
+// Pricing management
+app.get('/api/admin/pricing', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const pricing = getPricingConfig();
+    res.json({
+      success: true,
+      pricing
+    });
+  } catch (error) {
+    console.error('Error getting pricing:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting pricing configuration',
+      error: error.message
+    });
+  }
+});
+
+app.put('/api/admin/pricing', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const { pricing } = req.body;
+    if (!pricing || typeof pricing !== 'object') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid pricing data'
+      });
+    }
+
+    const result = updateMultiplePricingConfig(pricing);
+    res.json({
+      success: true,
+      message: 'Pricing updated successfully',
+      results: result.results,
+      errors: result.errors.length > 0 ? result.errors : undefined
+    });
+  } catch (error) {
+    console.error('Error updating pricing:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating pricing'
+    });
+  }
+});
+
+app.put('/api/admin/pricing/:key', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const { key } = req.params;
+    const { value } = req.body;
+
+    if (typeof value !== 'number' || value < 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid pricing value. Must be a positive number.'
+      });
+    }
+
+    const updatedValue = updatePricingConfig(key, value);
+    res.json({
+      success: true,
+      message: 'Pricing updated successfully',
+      key,
+      value: updatedValue
+    });
+  } catch (error) {
+    console.error('Error updating pricing:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating pricing'
     });
   }
 });

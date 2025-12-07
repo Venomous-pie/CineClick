@@ -65,5 +65,35 @@ db.exec(`
   )
 `);
 
+// Create pricing_config table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS pricing_config (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    configKey TEXT UNIQUE NOT NULL,
+    configValue REAL NOT NULL,
+    description TEXT,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+// Initialize default pricing if not exists
+const defaultPricing = [
+  { key: 'base_price', value: 250, desc: 'Base ticket price in PHP' },
+  { key: 'room_basic_multiplier', value: 1.0, desc: 'Basic room price multiplier' },
+  { key: 'room_3d_multiplier', value: 1.3, desc: '3D room price multiplier' },
+  { key: 'room_premium_multiplier', value: 1.8, desc: 'Premium room price multiplier' },
+  { key: 'room_vip_multiplier', value: 2.5, desc: 'VIP room price multiplier' },
+];
+
+defaultPricing.forEach(({ key, value, desc }) => {
+  const existing = db.prepare('SELECT id FROM pricing_config WHERE configKey = ?').get(key);
+  if (!existing) {
+    db.prepare(`
+      INSERT INTO pricing_config (configKey, configValue, description)
+      VALUES (?, ?, ?)
+    `).run(key, value, desc);
+  }
+});
+
 export default db;
 

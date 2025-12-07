@@ -1,4 +1,4 @@
-# SilverScreen Backend API
+# CineMax Backend API
 
 Backend server for fetching movie data from TMDB (The Movie Database) API and storing it in a JSON file.
 

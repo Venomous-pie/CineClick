@@ -55,6 +55,7 @@ export const Navbar = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="CineMax" className="w-10 h-10" />
               <span className="font-display text-2xl font-bold text-gradient-gold">
                 CineMax
               </span>
