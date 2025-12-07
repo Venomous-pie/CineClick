@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "fetch:movies": "node scripts/fetchMovies.js",
+    "fetch:movies:append": "node scripts/fetchMovies.js --append"
   },
   "dependencies": {
     "axios": "^1.6.0",

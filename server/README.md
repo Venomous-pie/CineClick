@@ -47,7 +47,30 @@ npm run dev
 
 ## Usage
 
-1. First, fetch movies from TMDB API (this will create `movies.json`):
+### Fetching Movies
+
+You can fetch movies from TMDB API in two ways:
+
+#### Option 1: Using npm scripts (Recommended - No server required)
+
+Fetch movies and create/replace `movies.json`:
+```bash
+npm run fetch:movies
+```
+
+Append new movies to existing `movies.json`:
+```bash
+npm run fetch:movies:append
+```
+
+#### Option 2: Using API endpoint (Server must be running)
+
+First, start the server:
+```bash
+npm run dev
+```
+
+Then, fetch movies from TMDB API (this will create `movies.json`):
 ```bash
 curl -X POST http://localhost:3001/api/movies/fetch
 ```
@@ -57,7 +80,9 @@ To append new movies without replacing existing ones:
 curl -X POST http://localhost:3001/api/movies/fetch?append=true
 ```
 
-2. Then, access the movies from the frontend:
+### Accessing Movies
+
+Once movies are fetched, you can access them from the frontend or via API:
 ```bash
 curl http://localhost:3001/api/movies
 ```
