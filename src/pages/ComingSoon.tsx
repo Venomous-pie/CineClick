@@ -41,9 +41,13 @@ const ComingSoon = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-medium mb-6">
               Coming Soon
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Upcoming Releases
-            </h1>
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="flex-1 h-px bg-yellow-500"></div>
+              <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground whitespace-nowrap">
+                Upcoming Releases
+              </h1>
+              <div className="flex-1 h-px bg-yellow-500"></div>
+            </div>
             <p className="text-muted-foreground text-lg">
               Get ready for the most anticipated movies of the year. Be the first
               to experience these blockbusters at CineMax.

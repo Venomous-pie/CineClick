@@ -179,20 +179,41 @@ export const HeroBanner = ({ movies }: HeroBannerProps) => {
         </button>
       </div>
 
-      {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-        {movies.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex
-                ? "w-8 bg-primary"
-                : "w-2 bg-muted-foreground/50 hover:bg-muted-foreground"
-            }`}
-          />
-        ))}
-      </div>
+      {/* Slide Indicators - Show only 3 */}
+      {movies.length > 0 && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+          {(() => {
+            // Show only 3 indicators: previous, current, next
+            const getVisibleIndicators = () => {
+              const indicators = [];
+              if (movies.length === 1) {
+                indicators.push(0);
+              } else if (movies.length === 2) {
+                indicators.push(0, 1);
+              } else {
+                // Show previous, current, next
+                for (let i = -1; i <= 1; i++) {
+                  const index = (currentIndex + i + movies.length) % movies.length;
+                  indicators.push(index);
+                }
+              }
+              return indicators;
+            };
+
+            return getVisibleIndicators().map((index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? "w-8 bg-primary"
+                    : "w-2 bg-muted-foreground/50 hover:bg-muted-foreground"
+                }`}
+              />
+            ));
+          })()}
+        </div>
+      )}
 
       {/* Movie Cards - Show only 3 cards that rotate with banner */}
       {movies.length > 0 && (

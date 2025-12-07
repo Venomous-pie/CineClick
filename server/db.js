@@ -19,12 +19,20 @@ db.exec(`
     firstName TEXT,
     lastName TEXT,
     phone TEXT,
+    role TEXT DEFAULT 'user',
     emailNotifications INTEGER DEFAULT 1,
     smsNotifications INTEGER DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
+
+// Add role column if it doesn't exist (for existing databases)
+try {
+  db.exec(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'`);
+} catch (e) {
+  // Column already exists, ignore
+}
 
 // Create sessions table for JWT token blacklisting (optional, for logout)
 db.exec(`

@@ -6,6 +6,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  role?: string;
   emailNotifications: number;
   smsNotifications: number;
   createdAt: string;

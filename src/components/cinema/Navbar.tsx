@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, LogOut, Ticket } from "lucide-react";
+import { User, LogOut, Ticket, Shield } from "lucide-react";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -134,6 +134,14 @@ export const Navbar = () => {
                           My Tickets
                         </Link>
                       </DropdownMenuItem>
+                      {user?.role === "admin" && (
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" />
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={logout}
@@ -202,6 +210,14 @@ export const Navbar = () => {
                           Account
                         </Button>
                       </Link>
+                      {user?.role === "admin" && (
+                        <Link to="/admin">
+                          <Button variant="outline" className="w-full mb-2 gap-2">
+                            <Shield className="w-4 h-4" />
+                            Admin Dashboard
+                          </Button>
+                        </Link>
+                      )}
                       <Button
                         variant="destructive"
                         className="w-full gap-2"

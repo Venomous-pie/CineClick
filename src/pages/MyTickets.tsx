@@ -201,11 +201,13 @@ const MyTickets = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="flex-1 h-px bg-yellow-500"></div>
+              <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground whitespace-nowrap">
+                My Tickets
+              </h1>
+              <div className="flex-1 h-px bg-yellow-500"></div>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              My Tickets
-            </h1>
             <p className="text-muted-foreground text-lg">
               View and manage your movie bookings
             </p>

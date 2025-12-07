@@ -10,8 +10,11 @@ import { ShowtimeSelector } from "@/components/cinema/ShowtimeSelector";
 import { SeatMap } from "@/components/cinema/SeatMap";
 import { BookingSummary } from "@/components/cinema/BookingSummary";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
+import { Calendar, Clock, Star, Users, Film, ArrowLeft, Play, Share2, Heart } from "lucide-react";
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -28,14 +31,12 @@ const MovieDetail = () => {
         if (response.success && response.movie) {
           setMovie(response.movie);
         } else {
-          // Fallback to local data
           const allMovies = await getMovies();
           const foundMovie = allMovies.find((m) => m.id === id);
           setMovie(foundMovie || null);
         }
       } catch (error) {
         console.error('Error loading movie:', error);
-        // Fallback to local data
         const allMovies = await getMovies();
         const foundMovie = allMovies.find((m) => m.id === id);
         setMovie(foundMovie || null);
@@ -49,10 +50,8 @@ const MovieDetail = () => {
   const [selectedRoom, setSelectedRoom] = useState<ViewingRoom | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<Showtime | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
-  const [bookingStep, setBookingStep] = useState<"room" | "showtime" | "seats">("room");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
-  // Generate mock occupied seats
   const occupiedSeats = useMemo(() => {
     const occupied: string[] = [];
     const rows = "ABCDEFGHIJ".split("");
@@ -79,13 +78,11 @@ const MovieDetail = () => {
     setSelectedRoom(room);
     setSelectedShowtime(null);
     setSelectedSeats([]);
-    setBookingStep("showtime");
   };
 
   const handleShowtimeSelect = (showtime: Showtime) => {
     setSelectedShowtime(showtime);
     setSelectedSeats([]);
-    setBookingStep("seats");
   };
 
   const handleSeatSelect = (seat: Seat) => {
@@ -121,7 +118,6 @@ const MovieDetail = () => {
       description: "You'll be redirected to the payment gateway...",
     });
     
-    // Store booking data in sessionStorage to pass to payment page
     const bookingData = {
       movieId: movie?.id,
       roomId: selectedRoom.id,
@@ -149,6 +145,17 @@ const MovieDetail = () => {
     return dates;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading movie details...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!movie) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -166,174 +173,184 @@ const MovieDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="relative h-[50vh] min-h-[400px]">
-        <img
-          src={movie.backdrop || movie.poster}
-          alt={movie.title}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-transparent" />
+      {/* Hero Section with Backdrop */}
+      <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={movie.backdrop || movie.poster}
+            alt={movie.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background" />
+        </div>
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-24 left-6 flex items-center gap-2 text-foreground hover:text-primary transition-colors"
-        >
-          <span>← Back</span>
-        </button>
-
-        {/* Movie Info */}
-        <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 pb-8">
-          <div className="flex gap-8 items-end">
-            <motion.img
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              src={movie.poster}
-              alt={movie.title}
-              className="w-48 h-72 object-cover rounded-xl shadow-2xl hidden md:block"
-            />
-            <div className="flex-1">
+        {/* Content Overlay */}
+        <div className="relative h-full flex items-end">
+          <div className="container mx-auto px-6 pb-12">
+            <div className="flex items-start gap-6">
+              {/* Poster */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="flex flex-wrap gap-2 mb-4"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="hidden md:block flex-shrink-0"
               >
-                {movie.genre.map((g) => (
-                  <span key={g} className="px-3 py-1 text-sm bg-primary/20 text-primary rounded-full">
-                    {g}
-                  </span>
-                ))}
+                <img
+                  src={movie.poster}
+                  alt={movie.title}
+                  className="w-56 h-80 object-cover rounded-2xl shadow-2xl border-4 border-background"
+                />
               </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4"
-              >
-                {movie.title}
-              </motion.h1>
+              {/* Movie Info */}
+              <div className="flex-1 min-w-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(-1)}
+                  className="mb-6 -ml-2"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex flex-wrap items-center gap-6 mb-4"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-foreground">★ {movie.rating.toFixed(1)}</span>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {movie.genre.slice(0, 3).map((g) => (
+                    <Badge key={g} variant="secondary" className="text-xs">
+                      {g}
+                    </Badge>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span>{formatDuration(movie.duration)}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span>{new Date(movie.releaseDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
-                </div>
-              </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex gap-3"
-              >
-                <Button variant="outline" size="sm" className="gap-2">
-                  Trailer
-                </Button>
-                <Button variant="ghost" size="icon">
-                  ♥
-                </Button>
-                <Button variant="ghost" size="icon">
-                  ↗
-                </Button>
-              </motion.div>
+                <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
+                  {movie.title}
+                </h1>
+
+                <div className="flex flex-wrap items-center gap-6 mb-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Star className="w-4 h-4 text-primary fill-primary" />
+                    <span className="font-semibold">{movie.rating.toFixed(1)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>{formatDuration(movie.duration)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span>{new Date(movie.releaseDate).getFullYear()}</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button variant="gold" size="lg" className="gap-2">
+                    <Play className="w-4 h-4" />
+                    Watch Trailer
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-10 w-10">
+                    <Heart className="w-4 h-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-10 w-10">
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Booking Section */}
+      {/* Main Content */}
       <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Booking Steps */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Date Selector */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex gap-2 overflow-x-auto pb-4"
-            >
-              {getDates().map((d) => (
-                <button
-                  key={d.value}
-                  onClick={() => {
-                    setSelectedDate(d.value);
-                    setSelectedShowtime(null);
-                    setSelectedSeats([]);
-                  }}
-                  className={`flex flex-col items-center px-4 py-3 rounded-xl min-w-[80px] transition-all ${
-                    selectedDate === d.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-card border border-border hover:border-primary/50"
-                  }`}
-                >
-                  <span className="text-xs font-medium opacity-70">{d.day}</span>
-                  <span className="text-2xl font-bold">{d.date}</span>
-                  <span className="text-xs">{d.month}</span>
-                </button>
-              ))}
-            </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Side - Booking Flow */}
+          <div className="lg:col-span-8 space-y-10">
+            {/* Synopsis Section */}
+            <section>
+              <h2 className="text-xl font-semibold mb-3 text-foreground">About</h2>
+              <p className="text-muted-foreground leading-relaxed text-lg">{movie.synopsis}</p>
+              
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-border">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1 flex items-center gap-2">
+                    <Film className="w-4 h-4" />
+                    Director
+                  </p>
+                  <p className="font-medium text-foreground">{movie.director}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1 flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Cast
+                  </p>
+                  <p className="font-medium text-foreground line-clamp-2">{movie.cast.join(", ")}</p>
+                </div>
+              </div>
+            </section>
 
-            {/* Step 1: Room Selection */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <h2 className="font-display text-2xl font-semibold text-foreground mb-6 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">1</span>
-                Select Experience
-              </h2>
+            <Separator />
+
+            {/* Date Selection */}
+            <section>
+              <h2 className="text-xl font-semibold mb-4 text-foreground">Choose Date</h2>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {getDates().map((d) => (
+                  <button
+                    key={d.value}
+                    onClick={() => {
+                      setSelectedDate(d.value);
+                      setSelectedShowtime(null);
+                      setSelectedSeats([]);
+                    }}
+                    className={`flex flex-col items-center px-5 py-3 rounded-lg min-w-[90px] transition-all shrink-0 ${
+                      selectedDate === d.value
+                        ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                        : "bg-muted hover:bg-muted/80 border border-border"
+                    }`}
+                  >
+                    <span className="text-xs font-medium opacity-80">{d.day}</span>
+                    <span className="text-xl font-bold my-1">{d.date}</span>
+                    <span className="text-xs">{d.month}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Room Selection */}
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-primary rounded-full"></div>
+                <h2 className="text-xl font-semibold text-foreground">Select Experience</h2>
+              </div>
               <RoomSelector
                 rooms={viewingRooms}
                 selectedRoom={selectedRoom}
                 onRoomSelect={handleRoomSelect}
                 basePrice={250}
               />
-            </motion.section>
+            </section>
 
-            {/* Step 2: Showtime Selection */}
+            {/* Showtime Selection */}
             {selectedRoom && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <h2 className="font-display text-2xl font-semibold text-foreground mb-6 flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">2</span>
-                  Select Showtime
-                </h2>
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-primary rounded-full"></div>
+                  <h2 className="text-xl font-semibold text-foreground">Select Time</h2>
+                </div>
                 <ShowtimeSelector
                   showtimes={showtimes}
                   selectedShowtime={selectedShowtime}
                   onShowtimeSelect={handleShowtimeSelect}
                 />
-              </motion.section>
+              </section>
             )}
 
-            {/* Step 3: Seat Selection */}
+            {/* Seat Selection */}
             {selectedShowtime && selectedRoom && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <h2 className="font-display text-2xl font-semibold text-foreground mb-6 flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">3</span>
-                  Select Seats
-                </h2>
-                <div className="bg-card border border-border rounded-2xl p-6">
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-primary rounded-full"></div>
+                  <h2 className="text-xl font-semibold text-foreground">Choose Your Seats</h2>
+                </div>
+                <div className="bg-card border border-border rounded-xl p-6">
                   <SeatMap
                     room={selectedRoom}
                     selectedSeats={selectedSeats}
@@ -342,45 +359,25 @@ const MovieDetail = () => {
                     maxSeats={10}
                   />
                 </div>
-              </motion.section>
+              </section>
             )}
           </div>
 
-          {/* Right Column - Summary */}
-          <div className="lg:col-span-1">
-            <BookingSummary
-              movie={movie}
-              room={selectedRoom}
-              showtime={selectedShowtime}
-              seats={selectedSeats}
-              onRemoveSeat={handleRemoveSeat}
-              onProceed={handleProceedToPayment}
-              onClear={handleClearSeats}
-            />
+          {/* Right Side - Booking Summary (Sticky) */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-24">
+              <BookingSummary
+                movie={movie}
+                room={selectedRoom}
+                showtime={selectedShowtime}
+                seats={selectedSeats}
+                onRemoveSeat={handleRemoveSeat}
+                onProceed={handleProceedToPayment}
+                onClear={handleClearSeats}
+              />
+            </div>
           </div>
         </div>
-
-        {/* Movie Synopsis */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-16 max-w-4xl"
-        >
-          <h2 className="font-display text-2xl font-semibold text-foreground mb-4">Synopsis</h2>
-          <p className="text-muted-foreground leading-relaxed">{movie.synopsis}</p>
-
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div>
-              <h3 className="text-sm text-muted-foreground mb-1">Director</h3>
-              <p className="font-medium text-foreground">{movie.director}</p>
-            </div>
-            <div className="col-span-2 md:col-span-3">
-              <h3 className="text-sm text-muted-foreground mb-1">Cast</h3>
-              <p className="font-medium text-foreground">{movie.cast.join(", ")}</p>
-            </div>
-          </div>
-        </motion.section>
       </div>
 
       <Footer />

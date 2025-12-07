@@ -12,6 +12,7 @@ import Experiences from "./pages/Experiences";
 import MyTickets from "./pages/MyTickets";
 import Account from "./pages/Account";
 import Payment from "./pages/Payment";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/my-tickets" element={<MyTickets />} />
             <Route path="/account" element={<Account />} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

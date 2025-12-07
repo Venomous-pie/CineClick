@@ -23,6 +23,21 @@ import {
   updateBookingStatus,
   cancelBooking
 } from './bookingService.js';
+import {
+  isAdmin,
+  setUserAsAdmin,
+  getAllUsers,
+  getUserById as getAdminUserById,
+  updateUserRole,
+  deleteUser,
+  createMovie,
+  updateMovie,
+  deleteMovie,
+  getAllBookings,
+  updateBookingStatusAdmin,
+  deleteBooking,
+  getDashboardStats
+} from './adminService.js';
 
 dotenv.config();
 
@@ -61,6 +76,25 @@ const authenticateToken = (req, res, next) => {
   }
 
   req.userId = decoded.userId;
+  next();
+};
+
+// Admin middleware
+const requireAdmin = (req, res, next) => {
+  if (!req.userId) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required'
+    });
+  }
+
+  if (!isAdmin(req.userId)) {
+    return res.status(403).json({
+      success: false,
+      message: 'Admin access required'
+    });
+  }
+
   next();
 };
 
@@ -483,8 +517,206 @@ app.get('/api/movies/:id', (req, res) => {
   }
 });
 
+// Admin endpoints
+// Dashboard stats
+app.get('/api/admin/stats', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const stats = getDashboardStats();
+    res.json({
+      success: true,
+      stats
+    });
+  } catch (error) {
+    console.error('Error getting dashboard stats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting dashboard stats',
+      error: error.message
+    });
+  }
+});
+
+// User management
+app.get('/api/admin/users', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const users = getAllUsers();
+    res.json({
+      success: true,
+      users
+    });
+  } catch (error) {
+    console.error('Error getting users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting users',
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const user = getAdminUserById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    res.json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting user',
+      error: error.message
+    });
+  }
+});
+
+app.put('/api/admin/users/:id/role', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const { role } = req.body;
+    const updatedUser = updateUserRole(req.params.id, role);
+    res.json({
+      success: true,
+      message: 'User role updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating user role'
+    });
+  }
+});
+
+app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const result = deleteUser(req.params.id);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error deleting user'
+    });
+  }
+});
+
+// Movie CRUD operations
+app.post('/api/admin/movies', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const movie = createMovie(req.body);
+    res.status(201).json({
+      success: true,
+      message: 'Movie created successfully',
+      movie
+    });
+  } catch (error) {
+    console.error('Error creating movie:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error creating movie'
+    });
+  }
+});
+
+app.put('/api/admin/movies/:id', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const movie = updateMovie(req.params.id, req.body);
+    res.json({
+      success: true,
+      message: 'Movie updated successfully',
+      movie
+    });
+  } catch (error) {
+    console.error('Error updating movie:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating movie'
+    });
+  }
+});
+
+app.delete('/api/admin/movies/:id', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const result = deleteMovie(req.params.id);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error) {
+    console.error('Error deleting movie:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error deleting movie'
+    });
+  }
+});
+
+// Booking management
+app.get('/api/admin/bookings', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const bookings = getAllBookings();
+    res.json({
+      success: true,
+      bookings
+    });
+  } catch (error) {
+    console.error('Error getting bookings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting bookings',
+      error: error.message
+    });
+  }
+});
+
+app.put('/api/admin/bookings/:id/status', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const { status } = req.body;
+    const booking = updateBookingStatusAdmin(req.params.id, status);
+    res.json({
+      success: true,
+      message: 'Booking status updated successfully',
+      booking
+    });
+  } catch (error) {
+    console.error('Error updating booking status:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating booking status'
+    });
+  }
+});
+
+app.delete('/api/admin/bookings/:id', authenticateToken, requireAdmin, (req, res) => {
+  try {
+    const result = deleteBooking(req.params.id);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error deleting booking'
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 API endpoints available at http://localhost:${PORT}/api`);
   console.log(`📁 Movies will be stored in: server/movies.json`);
+  console.log(`🔐 Admin endpoints available at http://localhost:${PORT}/api/admin`);
 });

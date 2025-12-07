@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/cinema/Navbar";
 import { Footer } from "@/components/cinema/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ import { LogOut, User, Ticket, CreditCard, Settings, Mail, Phone, Lock } from "l
 const Account = () => {
   const { user, loading, isAuthenticated, login, register, logout, updateProfile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Login state
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -45,8 +48,17 @@ const Account = () => {
         emailNotifications: user.emailNotifications === 1,
         smsNotifications: user.smsNotifications === 1,
       });
+      
+      // Redirect admin users to admin dashboard after login/register
+      // Only redirect if we're on the account page (not already on admin page)
+      if (user.role === "admin" && isAuthenticated && location.pathname === "/account") {
+        // Small delay to allow toast to show
+        setTimeout(() => {
+          navigate("/admin");
+        }, 500);
+      }
     }
-  }, [user]);
+  }, [user, isAuthenticated, navigate, location.pathname]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -87,9 +87,13 @@ const Movies = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Movies
-            </h1>
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="flex-1 h-px bg-yellow-500"></div>
+              <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground whitespace-nowrap">
+                Movies
+              </h1>
+              <div className="flex-1 h-px bg-yellow-500"></div>
+            </div>
             <p className="text-muted-foreground text-lg mb-8">
               Discover the latest blockbusters and timeless classics at CineMax
             </p>

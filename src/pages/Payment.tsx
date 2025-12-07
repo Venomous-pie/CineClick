@@ -209,33 +209,70 @@ const Payment = () => {
         <Navbar />
         <div className="container mx-auto px-6 py-32">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-2xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/20 mb-6">
-            </div>
-            <h1 className="font-display text-4xl font-bold text-foreground mb-4">
-              Payment Successful!
-            </h1>
-            <p className="text-muted-foreground text-lg mb-8">
-              Your booking has been confirmed. You will receive a confirmation
-              email shortly.
-            </p>
-            <div className="bg-card border border-border rounded-2xl p-6 mb-8">
-              <p className="text-sm text-muted-foreground mb-2">Booking Code</p>
-              <p className="font-mono text-2xl font-bold text-foreground mb-6">
-                {savedBooking?.bookingCode || `CMX-2024-${Math.floor(Math.random() * 10000)}`}
+            {/* Success Visual */}
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-500/20 mb-6 relative"
+              >
+                <div className="absolute inset-0 bg-green-500/30 rounded-full animate-ping" />
+                <div className="relative w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-2xl">✓</span>
+                </div>
+              </motion.div>
+              
+              <h1 className="font-display text-5xl md:text-6xl font-bold text-foreground mb-4">
+                You're All Set!
+              </h1>
+              <p className="text-muted-foreground text-xl max-w-2xl mx-auto">
+                Your booking is confirmed. Check your email for your tickets and booking details.
               </p>
-              <div className="flex gap-4 justify-center">
-                <Button variant="outline" asChild>
-                  <a href="/my-tickets">View Tickets</a>
-                </Button>
-                <Button variant="gold" asChild>
-                  <a href="/">Back to Home</a>
-                </Button>
-              </div>
             </div>
+
+            {/* Booking Code Card - Prominent */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-br from-card to-card/50 border-2 border-primary/20 rounded-3xl p-8 md:p-12 mb-8 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-8 bg-primary" />
+                  <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
+                    Your Booking Code
+                  </p>
+                </div>
+                <p className="font-mono text-4xl md:text-5xl font-bold text-foreground mb-2 tracking-wider">
+                  {savedBooking?.bookingCode || `CMX-2024-${Math.floor(Math.random() * 10000)}`}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Save this code or check your email for your tickets
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Action Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Button variant="gold" size="lg" asChild className="flex-1 sm:flex-none">
+                <a href="/my-tickets">View My Tickets</a>
+              </Button>
+              <Button variant="outline" size="lg" asChild className="flex-1 sm:flex-none">
+                <a href="/">Back to Home</a>
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
         <Footer />
@@ -247,202 +284,280 @@ const Payment = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-br from-card via-background to-card">
+      {/* Hero Section - Minimalist */}
+      <section className="pt-32 pb-12 relative">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="flex-1 h-px border-t-2 border-dashed border-yellow-500"></div>
+                <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground whitespace-nowrap">
+                  Final Step
+                </h1>
+                <div className="flex-1 h-px border-t-2 border-dashed border-yellow-500"></div>
+              </div>
+              <p className="text-muted-foreground">
+                Secure checkout • Your tickets await
+              </p>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Complete Payment
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Secure payment processing powered by trusted providers
-            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Payment Content */}
-      <main className="container mx-auto px-6 py-12 max-w-4xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Payment Form */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Method</CardTitle>
-                <CardDescription>
-                  Choose your preferred payment method
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup
-                  value={paymentMethod}
-                  onValueChange={setPaymentMethod}
-                  className="space-y-4"
-                >
-                  <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <RadioGroupItem value="gcash" id="gcash" />
-                    <Label
-                      htmlFor="gcash"
-                      className="flex-1 flex items-center gap-3 cursor-pointer"
-                    >
-                      <div>
-                        <p className="font-medium text-foreground">GCash</p>
-                        <p className="text-sm text-muted-foreground">
-                          Pay using your GCash wallet
-                        </p>
-                      </div>
-                    </Label>
+      {/* Payment Content - Creative Layout */}
+      <main className="container mx-auto px-6 pb-20 max-w-6xl">
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Order Summary - Left Side, Sticky */}
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="sticky top-24"
+            >
+              <Card className="border-2 bg-gradient-to-br from-card to-card/50">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <CardTitle className="text-xl">Your Booking</CardTitle>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                   </div>
-                  <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <RadioGroupItem value="paymaya" id="paymaya" />
-                    <Label
-                      htmlFor="paymaya"
-                      className="flex-1 flex items-center gap-3 cursor-pointer"
-                    >
-                      <div>
-                        <p className="font-medium text-foreground">PayMaya</p>
-                        <p className="text-sm text-muted-foreground">
-                          Pay using your PayMaya account
-                        </p>
-                      </div>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <RadioGroupItem value="bank_transfer" id="bank" />
-                    <Label
-                      htmlFor="bank"
-                      className="flex-1 flex items-center gap-3 cursor-pointer"
-                    >
-                      <div>
-                        <p className="font-medium text-foreground">
-                          Bank Transfer
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Direct bank transfer
-                        </p>
-                      </div>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <RadioGroupItem value="credit_card" id="credit" />
-                    <Label
-                      htmlFor="credit"
-                      className="flex-1 flex items-center gap-3 cursor-pointer"
-                    >
-                      <div>
-                        <p className="font-medium text-foreground">
-                          Credit/Debit Card
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Visa, Mastercard, or Amex
-                        </p>
-                      </div>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            {/* Payment Details Form */}
-            {paymentMethod === "credit_card" && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Card Details</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cardNumber">Card Number</Label>
-                    <Input
-                      id="cardNumber"
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
+                <CardContent className="space-y-6">
+                  {/* Movie Poster - Larger, More Prominent */}
+                  <div className="relative">
+                    <img
+                      src={movie.poster}
+                      alt={movie.title}
+                      className="w-full h-64 object-cover rounded-xl shadow-lg"
                     />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="expiry">Expiry Date</Label>
-                      <Input id="expiry" placeholder="MM/YY" maxLength={5} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-transparent to-transparent rounded-xl" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="font-bold text-lg text-white mb-1 drop-shadow-lg">
+                        {movie.title}
+                      </h3>
+                      <div className="flex items-center gap-3 text-sm text-white/90">
+                        <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded">
+                          {seats.length} seat{seats.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input id="cvv" placeholder="123" maxLength={3} />
+                  </div>
+
+                  {/* Seats Display - Visual */}
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">Selected Seats</p>
+                    <div className="flex flex-wrap gap-2">
+                      {seats.map((seat, idx) => (
+                        <div
+                          key={idx}
+                          className="px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-sm font-medium text-foreground"
+                        >
+                          {typeof seat === 'string' ? seat : seat.id}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cardName">Cardholder Name</Label>
-                    <Input id="cardName" placeholder="John Doe" />
+
+                  {/* Price Breakdown - Visual */}
+                  <div className="space-y-3 pt-4 border-t border-border">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="text-foreground font-medium">₱{totalPrice}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Service Fee</span>
+                      <span className="text-foreground font-medium">₱0</span>
+                    </div>
+                    <div className="pt-3 border-t-2 border-primary/20">
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-foreground">Total</span>
+                        <span className="text-2xl font-bold text-primary">₱{totalPrice}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Button - Prominent */}
+                  <Button
+                    variant="gold"
+                    className="w-full"
+                    size="lg"
+                    onClick={handlePayment}
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? (
+                      <span className="flex items-center gap-2">
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Processing...
+                      </span>
+                    ) : (
+                      `Complete Payment • ₱${totalPrice}`
+                    )}
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => navigate(-1)}
+                  >
+                    ← Back to Seats
+                  </Button>
+                  
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <div className="w-1 h-1 bg-green-500 rounded-full" />
+                    <p className="text-xs text-muted-foreground">
+                      SSL Encrypted • Secure Payment
+                    </p>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </motion.div>
           </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-4">
-                  <img
-                    src={movie.poster}
-                    alt={movie.title}
-                    className="w-20 h-28 object-cover rounded-lg"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">
-                      {movie.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {seats.length} seat{seats.length !== 1 ? "s" : ""}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Seats: {seats.map(s => typeof s === 'string' ? s : s.id).join(", ")}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-2 pt-4 border-t border-border">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="text-foreground">₱{totalPrice}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Service Fee</span>
-                    <span className="text-foreground">₱0</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-lg pt-2 border-t border-border">
-                    <span className="text-foreground">Total</span>
-                    <span className="text-foreground">₱{totalPrice}</span>
-                  </div>
-                </div>
-                <Button
-                  variant="gold"
-                  className="w-full"
-                  size="lg"
-                  onClick={handlePayment}
-                  disabled={isProcessing}
+          {/* Payment Form - Right Side */}
+          <div className="lg:col-span-3 order-1 lg:order-2 space-y-6">
+            {/* Payment Method Selection - Creative Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Choose Payment Method</h2>
+                <p className="text-muted-foreground">Select how you'd like to pay</p>
+              </div>
+              
+              <RadioGroup
+                value={paymentMethod}
+                onValueChange={setPaymentMethod}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+                <label
+                  htmlFor="gcash"
+                  className={`relative flex flex-col p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "gcash"
+                      ? "border-primary bg-primary/5 shadow-lg"
+                      : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  }`}
                 >
-                  {isProcessing ? "Processing..." : `Pay ₱${totalPrice}`}
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => navigate(-1)}
+                  <RadioGroupItem value="gcash" id="gcash" className="absolute top-4 right-4" />
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                      <span className="text-blue-500 font-bold text-lg">G</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">GCash</p>
+                      <p className="text-xs text-muted-foreground">Mobile Wallet</p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor="paymaya"
+                  className={`relative flex flex-col p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "paymaya"
+                      ? "border-primary bg-primary/5 shadow-lg"
+                      : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  }`}
                 >
-                  Back
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  Secure payment encrypted
-                </p>
-              </CardContent>
-            </Card>
+                  <RadioGroupItem value="paymaya" id="paymaya" className="absolute top-4 right-4" />
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <span className="text-purple-500 font-bold text-lg">P</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">PayMaya</p>
+                      <p className="text-xs text-muted-foreground">Mobile Wallet</p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor="bank"
+                  className={`relative flex flex-col p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "bank_transfer"
+                      ? "border-primary bg-primary/5 shadow-lg"
+                      : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  }`}
+                >
+                  <RadioGroupItem value="bank_transfer" id="bank" className="absolute top-4 right-4" />
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                      <span className="text-green-500 font-bold text-lg">₱</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Bank Transfer</p>
+                      <p className="text-xs text-muted-foreground">Direct Transfer</p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor="credit"
+                  className={`relative flex flex-col p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                    paymentMethod === "credit_card"
+                      ? "border-primary bg-primary/5 shadow-lg"
+                      : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  }`}
+                >
+                  <RadioGroupItem value="credit_card" id="credit" className="absolute top-4 right-4" />
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                      <span className="text-amber-500 font-bold text-lg">💳</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Card</p>
+                      <p className="text-xs text-muted-foreground">Visa, Mastercard, Amex</p>
+                    </div>
+                  </div>
+                </label>
+              </RadioGroup>
+            </motion.div>
+
+            {/* Payment Details Form - Only for Credit Card */}
+            {paymentMethod === "credit_card" && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Card className="border-2">
+                  <CardHeader>
+                    <CardTitle>Card Information</CardTitle>
+                    <CardDescription>
+                      Enter your card details securely
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cardNumber">Card Number</Label>
+                      <Input
+                        id="cardNumber"
+                        placeholder="1234 5678 9012 3456"
+                        maxLength={19}
+                        className="text-lg"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="expiry">Expiry Date</Label>
+                        <Input id="expiry" placeholder="MM/YY" maxLength={5} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="cvv">CVV</Label>
+                        <Input id="cvv" placeholder="123" maxLength={3} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cardName">Cardholder Name</Label>
+                      <Input id="cardName" placeholder="John Doe" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
           </div>
         </div>
       </main>

@@ -46,7 +46,7 @@ export const registerUser = async (email, password, firstName, lastName, phone) 
   const token = generateToken(userId);
 
   // Get user data (without password)
-  const user = db.prepare('SELECT id, email, firstName, lastName, phone, emailNotifications, smsNotifications, createdAt FROM users WHERE id = ?').get(userId);
+  const user = db.prepare('SELECT id, email, firstName, lastName, phone, role, emailNotifications, smsNotifications, createdAt FROM users WHERE id = ?').get(userId);
 
   return { user, token };
 };
@@ -73,7 +73,7 @@ export const loginUser = async (email, password) => {
 };
 
 export const getUserById = (userId) => {
-  const user = db.prepare('SELECT id, email, firstName, lastName, phone, emailNotifications, smsNotifications, createdAt, updatedAt FROM users WHERE id = ?').get(userId);
+  const user = db.prepare('SELECT id, email, firstName, lastName, phone, role, emailNotifications, smsNotifications, createdAt, updatedAt FROM users WHERE id = ?').get(userId);
   return user || null;
 };
 
